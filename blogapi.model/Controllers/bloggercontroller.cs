@@ -1,4 +1,5 @@
 ﻿using blogapi.model.Models;
+using blogapi.model.Models.DTOs;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -75,5 +76,29 @@ namespace blogapi.model.Controllers
             connector.Close();
             return new { message = "sikeres talalat", result = blogger };
         }
+
+        [HttpPost]
+
+        public object AddNewBlogger(AddNewBloggerDto addnewbloggerdto)
+
+        {
+        var connector = new MySqlConnection(ConectionString);
+            connector.Open();
+            string sql = @"INSERT INTO `blogger`(`Name`, `Email`, `Age`, `Password`, `RegistrationTime`) VALUES (@name, @email, @age, @password, @registrationtime)";
+            var cmd = new MySqlCommand(sql, connector);
+
+            cmd.Parameters.AddWithValue("@name", addnewbloggerdto.Name);
+            cmd.Parameters.AddWithValue("@email", addnewbloggerdto.Email);
+            cmd.Parameters.AddWithValue("@age", addnewbloggerdto.Age);
+            cmd.Parameters.AddWithValue("@password", addnewbloggerdto.Password);
+            cmd.Parameters.AddWithValue("@registrationtime", DateTime.Now);
+            
+            cmd.ExecuteNonQuery();
+
+            connector.Close();
+
+            return new { message = "sikeres felvetel", result = addnewbloggerdto};
+        }
+        
     }
 }
