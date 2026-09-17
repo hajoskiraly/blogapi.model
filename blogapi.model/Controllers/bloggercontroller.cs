@@ -8,6 +8,7 @@ using System.Diagnostics.Eventing.Reader;
 
 namespace blogapi.model.Controllers
 {
+    //watermark by botond XDDDDD
     [Route("bloggers")]
     [ApiController]
     public class bloggercontroller : ControllerBase
@@ -143,11 +144,29 @@ namespace blogapi.model.Controllers
             var cmd = new MySqlCommand(sql, connector);
 
             cmd.Parameters.AddWithValue("@id", deletebloggerdto.Id);
-            var reader = cmd.ExecuteReader();
+            object result = cmd.ExecuteNonQuery() > 0 ? new { message = "sikeres torles" } : new { message = "nincs ilyen felhasznalo" };
 
-            
             connector.Close();
-            return new {message = "sikeres torles", result = deletebloggerdto };
+            return result;
+        }
+
+        [HttpPut("updateblogger")]
+
+        public object updateBloggerDto([FromQuery]int Id,  [FromBody]updateBloggerDto blogger)
+        {
+            var connector = new MySqlConnection(ConectionString);
+            connector.Open();
+            string sql = @"UPDATE blogger SET Name = @name, Email = @email, Age = @age, Password = @password WHERE Id = @id";
+            var cmd = new MySqlCommand(sql, connector);
+            cmd.Parameters.AddWithValue("@name", blogger.Name);
+            cmd.Parameters.AddWithValue("@email", blogger.Email);
+            cmd.Parameters.AddWithValue("@age", blogger.Age);
+            cmd.Parameters.AddWithValue("@password", blogger.Password);
+            cmd.Parameters.AddWithValue("@id", Id);
+
+            object result = cmd.ExecuteNonQuery() > 0 ? new {message = "sikeres feltoltes"} : new {message = "nincs ilyen felhasznalo"};
+            connector.Close();
+            return result;
         }
     }
     
