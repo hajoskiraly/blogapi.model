@@ -45,12 +45,13 @@ namespace blogapi.model.Controllers
 
             return new
             {
-                message = "sikeres lekerdezes", result = bloggers
-            
+                message = "sikeres lekerdezes",
+                result = bloggers
+
             };
         }
         [HttpGet("byId")]
-        public object GetBloggerById(int id )
+        public object GetBloggerById(int id)
         {
             var connector = new MySqlConnection(ConectionString);
             connector.Open();
@@ -83,7 +84,7 @@ namespace blogapi.model.Controllers
         public object AddNewBlogger(AddNewBloggerDto addnewbloggerdto)
 
         {
-        var connector = new MySqlConnection(ConectionString);
+            var connector = new MySqlConnection(ConectionString);
             connector.Open();
             string sql = @"INSERT INTO `blogger`(`Name`, `Email`, `Age`, `Password`, `RegistrationTime`) VALUES (@name, @email, @age, @password, @registrationtime)";
             var cmd = new MySqlCommand(sql, connector);
@@ -93,12 +94,12 @@ namespace blogapi.model.Controllers
             cmd.Parameters.AddWithValue("@age", addnewbloggerdto.Age);
             cmd.Parameters.AddWithValue("@password", addnewbloggerdto.Password);
             cmd.Parameters.AddWithValue("@registrationtime", DateTime.Now);
-            
+
             cmd.ExecuteNonQuery();
 
             connector.Close();
 
-            return new { message = "sikeres felvetel", result = addnewbloggerdto};
+            return new { message = "sikeres felvetel", result = addnewbloggerdto };
         }
 
         [HttpPost("loginblogger")]
@@ -114,16 +115,16 @@ namespace blogapi.model.Controllers
             cmd.Parameters.AddWithValue("@password", loginbloggerdto.Password);
 
             var reader = cmd.ExecuteReader();
-            if (reader.Read() == true) 
+            if (reader.Read() == true)
             {
-                return new {message = "sikeres bejelentkezes", result = reader.GetInt32(0) }; 
-            
-            
-            
+                return new { message = "sikeres bejelentkezes", result = reader.GetInt32(0) };
+
+
+
             }
             else
             {
-                return new {message = "sikertelen bejelentkezes", result = loginbloggerdto };
+                return new { message = "sikertelen bejelentkezes", result = loginbloggerdto };
 
             }
 
@@ -131,6 +132,23 @@ namespace blogapi.model.Controllers
             connector.Close();
 
         }
-        
+
+        [HttpDelete("deleteblogger")]
+        public object deleteBloggerDto(deleteBloggerDto deletebloggerdto)
+        {
+            var connector = new MySqlConnection(ConectionString);
+            connector.Open();
+            string sql = @"DELETE FROM blogger WHERE Id = @id";
+
+            var cmd = new MySqlCommand(sql, connector);
+
+            cmd.Parameters.AddWithValue("@id", deletebloggerdto.Id);
+            var reader = cmd.ExecuteReader();
+
+            
+            connector.Close();
+            return new {message = "sikeres torles", result = deletebloggerdto };
+        }
     }
+    
 }
