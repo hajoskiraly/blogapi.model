@@ -77,7 +77,7 @@ namespace blogapi.model.Controllers
             return new { message = "sikeres talalat", result = blogger };
         }
 
-        [HttpPost]
+        [HttpPost("register")]
 
         public object AddNewBlogger(AddNewBloggerDto addnewbloggerdto)
 
