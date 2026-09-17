@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MySqlConnector;
+using System.Diagnostics.Eventing.Reader;
 
 namespace blogapi.model.Controllers
 {
@@ -98,6 +99,37 @@ namespace blogapi.model.Controllers
             connector.Close();
 
             return new { message = "sikeres felvetel", result = addnewbloggerdto};
+        }
+
+        [HttpPost("loginblogger")]
+        public object loginBloggerDto(LoginBloggerDto loginbloggerdto)
+        {
+            var connector = new MySqlConnection(ConectionString);
+            connector.Open();
+            string sql = @"SELECT * FROM blogger WHERE Email = @email AND Password = @password";
+            var cmd = new MySqlCommand(sql, connector);
+
+
+            cmd.Parameters.AddWithValue("@email", loginbloggerdto.Email);
+            cmd.Parameters.AddWithValue("@password", loginbloggerdto.Password);
+
+            var reader = cmd.ExecuteReader();
+            if (reader.Read() == true) 
+            {
+                return new {message = "sikeres bejelentkezes", result = reader.GetInt32(0) }; 
+            
+            
+            
+            }
+            else
+            {
+                return new {message = "sikertelen bejelentkezes", result = loginbloggerdto };
+
+            }
+
+
+            connector.Close();
+
         }
         
     }
