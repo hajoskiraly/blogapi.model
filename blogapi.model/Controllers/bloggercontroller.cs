@@ -152,7 +152,7 @@ namespace blogapi.model.Controllers
 
         [HttpPut("updateblogger")]
 
-        public object updateBloggerDto([FromQuery]int Id,  [FromBody]updateBloggerDto blogger)
+        public object updateBloggerDto([FromQuery] int Id, [FromBody] updateBloggerDto blogger)
         {
             var connector = new MySqlConnection(ConectionString);
             connector.Open();
@@ -164,10 +164,44 @@ namespace blogapi.model.Controllers
             cmd.Parameters.AddWithValue("@password", blogger.Password);
             cmd.Parameters.AddWithValue("@id", Id);
 
-            object result = cmd.ExecuteNonQuery() > 0 ? new {message = "sikeres feltoltes"} : new {message = "nincs ilyen felhasznalo"};
+            object result = cmd.ExecuteNonQuery() > 0 ? new { message = "sikeres feltoltes" } : new { message = "nincs ilyen felhasznalo" };
             connector.Close();
             return result;
         }
+
+        [HttpGet("countbloggers")]
+        public object countBloggers()
+        {
+            var connector = new MySqlConnection(ConectionString);
+            connector.Open();
+            string sql = @"SELECT COUNT(*) FROM blogger";
+            var cmd = new MySqlCommand(sql, connector);
+            int count = Convert.ToInt32(cmd.ExecuteScalar());
+            connector.Close();
+            return new { message = "sikeres lekerdezes", result = count };
+        }
+
+        [HttpGet("getbloggersbyemailsortabc")]
+        public object getBloggersByEmailSortABC()
+        {
+            var connector = new MySqlConnection(ConectionString);
+            connector.Open();
+            string sql = @"SELECT * FROM blogger ORDER BY Email ASC";
+            var cmd = new MySqlCommand(sql, connector);
+            var reader = cmd.ExecuteReader();
+            var bloggers = new List<object>();
+            while (reader.Read())
+            {
+                bloggers.Add(new
+                {
+                    Id = reader.GetInt32(0),
+                    Name = reader.GetString(1),
+                    Email = reader.GetString(2),
+                    Age = reader.GetInt32(3)
+                });
+            }
+            connector.Close();
+            return new { message = "sikeres lekerdezes", result = bloggers };
+        }
     }
-    
 }
