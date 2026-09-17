@@ -1,0 +1,6 @@
+@blogapi.model_HostAddress = http://localhost:5197
+
+GET {{blogapi.model_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
