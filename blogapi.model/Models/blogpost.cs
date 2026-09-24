@@ -1,0 +1,13 @@
+﻿namespace blogapi.model.Models
+{
+    public class blogpost
+    {
+        public int Id { get; set; }
+        public string Title { get; set; } = string.Empty;
+        public string Content { get; set; } = string.Empty;
+        public DateTime postTime { get; set; }
+        public DateTime updateTime { get; set; }
+        public int blogId { get; set; }
+
+    }
+}
